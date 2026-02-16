@@ -3,7 +3,7 @@ import { useAuth } from '../context/AuthContext';
 import { Helmet } from 'react-helmet';
 import { motion } from 'framer-motion';
 import Header from '../components/Header';
-import LayetteItem from '../components/LayetteItem';
+import LayetteItem from '../components/Layetteitem';
 import { RotateCcw, Search, Info } from 'lucide-react';
 import { useToast } from '../components/ui/use-toast';
 
@@ -191,7 +191,7 @@ function LayetteList() {
                   {/* Explanatory text for Mala da Maternidade */}
                   {category === 'MALA DA MATERNIDADE' && (
                     <p className="text-sm text-gray-800 font-bold mb-6 leading-relaxed max-w-3xl">
-                      Aqui são as quantidades dos itens para levar ao hospital, é uma ajuda para montar sua mala maternidade e tornar o parto mais fácil e prático.
+                      Aqui são as quantidades dos itens para levar ao hospital, é uma ajuda para montar sua mala maternidade e tornar o parto mais fácil e prático. Monte 3 kits das quantidades colocadas
                     </p>
                   )}
 
