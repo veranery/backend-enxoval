@@ -198,7 +198,7 @@ function LayetteList() {
                   {/* Note for QUARTO category */}
                   {category === 'QUARTO' && (
                     <p className="text-sm text-gray-500 mb-6 leading-relaxed">
-                      Dê preferência aos que vira cama ou mini sofá
+                      Temos os móveis para o quarto perfeito do seu bebê
                     </p>
                   )}
 

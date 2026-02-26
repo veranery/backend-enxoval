@@ -170,7 +170,7 @@ export const AuthProvider = ({ children }) => {
   const initializeDefaultData = (phone) => {
     const defaultItems = DEFAULT_LAYETTE_ITEMS.map(item => ({
       ...item,
-      desiredQuantity: item.recommendedQuantity,
+      desiredQuantity:0 ,
       purchased: false,
     }));
     setLayetteItems(defaultItems);

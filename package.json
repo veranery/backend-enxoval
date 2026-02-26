@@ -4,11 +4,11 @@
 	"version": "0.0.0",
 	"private": true,
 	"scripts": {
-  	"dev": "vite --host --port 3000",
-  	"build": "vite build",
-  	"preview": "vite preview --host --port 3000",
-  	"lint": "eslint . --quiet"
-},
+		"dev": "vite --host --port 3000",
+		"build": "vite build",
+		"preview": "vite preview --host --port 3000",
+		"lint": "eslint . --quiet"
+	},
 	"dependencies": {
 		"@radix-ui/react-alert-dialog": "^1.1.4",
 		"@radix-ui/react-avatar": "^1.1.2",
