@@ -7,26 +7,33 @@ import { Phone, ArrowRight } from 'lucide-react';
 import { useToast } from '../components/ui/use-toast';
 import logoMagiaKids from "../assets/logo-magia-kids.png";
 
+function validarCelularBR(telefone) {
+  const numero = telefone.replace(/\D/g, '');
+  return /^[1-9]{2}9\d{8}$/.test(numero);
+}
 
 function LoginPage() {
   const [phone, setPhone] = useState('');
+  const [phoneError, setPhoneError] = useState(false);
+
   const { login } = useAuth();
   const navigate = useNavigate();
   const { toast } = useToast();
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    
-    if (!phone.trim()) {
+
+    if (!phone.trim() || !validarCelularBR(phone)) {
+      setPhoneError(true);
       toast({
-        title: 'Erro',
-        description: 'Por favor, insira seu número de telefone.',
+        title: 'Telefone inválido',
+        description: 'Digite um celular válido com DDD. Ex: (11) 9XXXX-XXXX',
         variant: 'destructive',
       });
       return;
     }
-    
-    login(phone);
+
+    login(phone.replace(/\D/g, ''));
     navigate('/lista');
   };
 
@@ -38,7 +45,6 @@ function LoginPage() {
       </Helmet>
 
       <div className="min-h-screen flex items-center justify-center p-4 bg-white">
-        {/* Abstract Background Shapes */}
         <div className="fixed inset-0 overflow-hidden pointer-events-none">
           <div className="absolute top-[-10%] right-[-5%] w-96 h-96 bg-rosa/10 rounded-full blur-3xl" />
           <div className="absolute bottom-[-10%] left-[-5%] w-96 h-96 bg-azul/10 rounded-full blur-3xl" />
@@ -53,24 +59,17 @@ function LoginPage() {
         >
           <div className="bg-white rounded-[2rem] shadow-xl p-8 border border-gray-100">
             <div className="text-center mb-8">
-              <motion.div 
+              <motion.div
                 initial={{ scale: 0.9 }}
                 animate={{ scale: 1 }}
                 transition={{ duration: 0.5 }}
                 className="inline-block p-4 rounded-full bg-gray-50 mb-6"
               >
-                <img
-                  src={logoMagiaKids}
-                  alt="Magia Kids"
-                  className="h-16 object-contain"
-                />
+                <img src={logoMagiaKids} alt="Magia Kids" className="h-16 object-contain" />
               </motion.div>
-              <h1 className="text-3xl font-bold text-gray-800 mb-3 tracking-tight">
-                Bem-vindo!
-              </h1>
-              <p className="text-gray-500">
-                Entre com seu telefone para gerenciar sua lista de enxoval
-              </p>
+
+              <h1 className="text-3xl font-bold text-gray-800 mb-3 tracking-tight">Bem-vindo!</h1>
+              <p className="text-gray-500">Entre com seu telefone para gerenciar sua lista de enxoval</p>
             </div>
 
             <form onSubmit={handleSubmit} className="space-y-6">
@@ -78,18 +77,37 @@ function LoginPage() {
                 <label className="block text-sm font-bold text-gray-700 mb-2 uppercase tracking-wide">
                   Número de Telefone
                 </label>
+
                 <div className="relative group">
                   <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
                     <Phone className="text-rosa group-focus-within:text-rosa transition-colors" size={20} />
                   </div>
+
                   <input
                     type="tel"
                     value={phone}
-                    onChange={(e) => setPhone(e.target.value)}
+                    onChange={(e) => {
+                      const valor = e.target.value;
+                      setPhone(valor);
+
+                      if (valor && !validarCelularBR(valor)) {
+                        setPhoneError(true);
+                      } else {
+                        setPhoneError(false);
+                      }
+                    }}
                     placeholder="(11) 99999-9999"
-                    className="w-full pl-12 pr-4 py-4 bg-gray-50 border border-gray-200 rounded-xl text-gray-800 placeholder-gray-400 focus:outline-none focus:ring-4 focus:ring-rosa/10 focus:border-rosa transition-all font-medium text-lg"
+                    className={`w-full pl-12 pr-4 py-4 bg-gray-50 border rounded-xl text-gray-800 placeholder-gray-400 focus:outline-none focus:ring-4 transition-all font-medium text-lg
+                      ${phoneError ? 'border-red-500 focus:ring-red-200' : 'border-gray-200 focus:ring-rosa/10 focus:border-rosa'}
+                    `}
                   />
                 </div>
+
+                {phoneError && (
+                  <p className="mt-2 text-sm text-red-500 font-semibold">
+                    Telefone inválido
+                  </p>
+                )}
               </div>
 
               <motion.button

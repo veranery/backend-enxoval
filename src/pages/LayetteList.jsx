@@ -8,7 +8,7 @@ import { RotateCcw, Search, Info } from 'lucide-react';
 import { useToast } from '../components/ui/use-toast';
 
 // Updated Category Order
-const CATEGORIES = ['Todas', 'ROUPINHAS', 'ENXOVAL', 'HIGIENE', 'ACESSÓRIO', 'QUARTO', 'MALA DA MATERNIDADE'];
+const CATEGORIES = ['Todas', 'ROUPINHAS', 'ENXOVAL', 'HIGIENE', 'ACESSÓRIO', 'QUARTO', 'PARA MÃE', 'MALA DA MATERNIDADE'];
 
 // Updated Category Colors (QUARTO instead of BERÇO)
 const CATEGORY_COLORS = {
@@ -17,7 +17,8 @@ const CATEGORY_COLORS = {
   'HIGIENE': '#FFD93D',             // Yellow
   'ACESSÓRIO': '#6BCB77',           // Green
   'QUARTO': '#9D4EDD',              // Purple
-  'MALA DA MATERNIDADE': '#4D96FF', // Blue
+  'MALA DA MATERNIDADE': '#76a7ec', // Blue
+  'PARA MÃE': '#FF00FF'
 };
 
 function LayetteList() {
@@ -191,7 +192,7 @@ function LayetteList() {
                   {/* Explanatory text for Mala da Maternidade */}
                   {category === 'MALA DA MATERNIDADE' && (
                     <p className="text-sm text-gray-800 font-bold mb-6 leading-relaxed max-w-3xl">
-                      Aqui são as quantidades dos itens para levar ao hospital, é uma ajuda para montar sua mala maternidade e tornar o parto mais fácil e prático. Monte 3 kits das quantidades colocadas
+                     Quantidades dos itens para levar ao hospital, é uma ajuda para montar sua mala maternidade e tornar o parto mais fácil e prático.
                     </p>
                   )}
 

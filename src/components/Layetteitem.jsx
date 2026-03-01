@@ -9,6 +9,7 @@ const CATEGORY_COLORS = {
   'ACESSÓRIO': '#6BCB77',           // Green
   'MALA DA MATERNIDADE': '#4D96FF', // Blue
   'QUARTO': '#9D4EDD',              // Purple (Renamed from BERÇO)
+  'PARA MÃE': '#FF00FF'
 };
 
 function LayetteItem({ item }) {

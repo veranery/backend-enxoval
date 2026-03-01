@@ -20,7 +20,7 @@ const DEFAULT_LAYETTE_ITEMS = [
   { id: 11, name: 'Mijão P', category: 'ROUPINHAS', recommendedQuantity: 6 },
   { id: 85, name: 'Mijão M', category: 'ROUPINHAS', recommendedQuantity: 6},
   { id: 12, name: 'Macacão Longo RN', category: 'ROUPINHAS', recommendedQuantity: 3 },
-  { id: 13, name: 'Macacão Longo P', category: 'ROUPINHAS', recommendedQuantity: 3 },
+  { id: 13, name: 'Macacão Longo P', category: 'ROUPINHAS', recommendedQuantity: 4 },
   { id: 14, name: 'Macacão Curto ou Vestidos P', category: 'ROUPINHAS', recommendedQuantity: 3 },
   { id: 15, name: 'Macacão Curto ou Vestidos M', category: 'ROUPINHAS', recommendedQuantity: 3 },
   { id: 16, name: 'Pares de meia RN', category: 'ROUPINHAS', recommendedQuantity: 6 },
@@ -70,8 +70,7 @@ const DEFAULT_LAYETTE_ITEMS = [
   { id: 81, name: 'Algodão', category: 'HIGIENE', recommendedQuantity: 1},
   { id: 82, name: 'Álcool 70 em gel', category: 'HIGIENE', recommendedQuantity: 1},
   { id: 83, name: 'Pomada de assadura', category: 'HIGIENE', recommendedQuantity: 2},
-
-
+  
   // ACESSÓRIO (#6BCB77)
   { id: 48, name: 'Mamadeira (livre)', category: 'ACESSÓRIO', recommendedQuantity: 1 },
   { id: 49, name: 'Escova para limpar mamadeira (livre)', category: 'ACESSÓRIO', recommendedQuantity: 1 },
@@ -82,6 +81,11 @@ const DEFAULT_LAYETTE_ITEMS = [
   { id: 54, name: 'Trava para gaveta', category: 'ACESSÓRIO', recommendedQuantity: 1 },
   { id: 55, name: 'Protetor de quina', category: 'ACESSÓRIO', recommendedQuantity: 1 },
   { id: 56, name: 'Tapete de atividades', category: 'ACESSÓRIO', recommendedQuantity: 1 },
+  { id: 86, name: 'Bebê conforto (livre)', category:'ACESSÓRIO', recommendedQuantity:1},
+  { id: 87, name: 'Capa para bebê conforto (livre)', category:'ACESSÓRIO', recommendedQuantity:1},
+  { id: 88, name: 'Carinho de bebê (livre)', category:'ACESSÓRIO', recommendedQuantity:1},
+  { id: 91, name: 'Babá Eletrônica(livre)', category:'ACESSÓRIO', recommendedQuantity:1},
+
 
   // MALA DA MATERNIDADE (#4D96FF)
   { id: 57, name: 'Saída maternidade', category: 'MALA DA MATERNIDADE', recommendedQuantity: 3 },
@@ -102,6 +106,17 @@ const DEFAULT_LAYETTE_ITEMS = [
   { id: 70, name: 'Cômodas (livre)', category: 'QUARTO', recommendedQuantity: 1 },
   { id: 71, name: 'Guarda roupa (livre)', category: 'QUARTO', recommendedQuantity: 1 },
   { id: 72, name: 'Cama Auxiliar (livre)', category:'QUARTO', recommendedQuantity:1 },
+  { id: 83, name: 'Colchão para Berço', category:'QUARTO', recommendedQuantity:1},
+  { id: 84, name: 'Protetor impermeável para colchão', category:'QUARTO', recommendedQuantity:1},
+  { id: 85, name: 'Jogo de lençol', category:'QUARTO', recommendedQuantity:1},
+
+  // PARA MÃE
+  { id: 88, name: 'Sutiã de amamentação', category:'PARA MÃE', recommendedQuantity:1},
+  { id: 89, name: 'Absorvente para seios', category:'PARA MÃE', recommendedQuantity:2},
+  { id: 90, name: 'Rosquinhas de Amamentação', category:'PARA MÃE', recommendedQuantity:1},
+  { id: 91, name: 'Absorvente pós parto(livre)', category:'PARA MÃE', recommendedQuantity:1},
+  { id: 92, name: 'Pote para armazenar leite(livre)', category:'PARA MÃE', recommendedQuantity:1},
+  
 ];
 
 export const AuthProvider = ({ children }) => {
