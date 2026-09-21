@@ -123,7 +123,7 @@ function LoginPage() {
 
             <div className="mt-10 pt-6 border-t border-gray-100 text-center">
               <p className="text-xs text-gray-400 leading-relaxed">
-                Ao continuar, você terá acesso à sua lista de enxoval personalizada. Seus dados serão salvos utilizando seu número de telefone.
+                Ao continuar, você terá acesso à sua lista de enxoval personalizada. Seus dados ficam salvos com o seu número de telefone e sincronizados em qualquer aparelho onde você entrar.
               </p>
             </div>
           </div>
