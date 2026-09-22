@@ -16,6 +16,7 @@ function LoginPage() {
   const [phone, setPhone] = useState('');
   const [phoneError, setPhoneError] = useState(false);
   const [isSharedLink, setIsSharedLink] = useState(false);
+  const [sharedReadOnly, setSharedReadOnly] = useState(false);
 
   const { login } = useAuth();
   const navigate = useNavigate();
@@ -23,12 +24,15 @@ function LoginPage() {
 
   // Se a pessoa chegou por um link de "Compartilhar lista", o telefone já
   // vem preenchido na URL (?tel=...), então só falta clicar em Entrar.
+  // Se o link também tiver "&modo=ver", ela entra só para acompanhar,
+  // sem poder alterar nada.
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
     const sharedPhone = params.get('tel');
     if (sharedPhone && validarCelularBR(sharedPhone)) {
       setPhone(sharedPhone);
       setIsSharedLink(true);
+      setSharedReadOnly(params.get('modo') === 'ver');
     }
   }, []);
 
@@ -45,7 +49,7 @@ function LoginPage() {
       return;
     }
 
-    login(phone.replace(/\D/g, ''));
+    login(phone.replace(/\D/g, ''), { readOnly: isSharedLink && sharedReadOnly });
     navigate('/lista');
   };
 
@@ -83,7 +87,9 @@ function LoginPage() {
               <h1 className="text-3xl font-bold text-gray-800 mb-3 tracking-tight">Bem-vindo!</h1>
               <p className="text-gray-500">
                 {isSharedLink
-                  ? 'Você recebeu uma lista de enxoval compartilhada. É só confirmar abaixo para acessá-la.'
+                  ? sharedReadOnly
+                    ? 'Você recebeu uma lista de enxoval para acompanhar. É só confirmar abaixo (você não vai poder editar).'
+                    : 'Você recebeu uma lista de enxoval compartilhada. É só confirmar abaixo para acessá-la.'
                   : 'Entre com seu telefone para gerenciar sua lista de enxoval'}
               </p>
             </div>
@@ -132,7 +138,7 @@ function LoginPage() {
                 whileTap={{ scale: 0.98 }}
                 className="w-full py-4 px-6 bg-rosa hover:bg-pink-500 text-white font-bold rounded-xl shadow-lg hover:shadow-pink-200 transition-all duration-300 flex items-center justify-center gap-2"
               >
-                <span>Entrar</span>
+                <span>{isSharedLink && sharedReadOnly ? 'Ver lista' : 'Entrar'}</span>
                 <ArrowRight size={20} />
               </motion.button>
             </form>

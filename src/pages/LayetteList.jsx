@@ -10,7 +10,7 @@ import { useToast } from '../components/ui/use-toast';
 import { CATEGORIES, getCategoryColor } from '../data/categories';
 
 function LayetteList() {
-  const { layetteItems, resetList, isLoadingList } = useAuth();
+  const { layetteItems, resetList, isLoadingList, isReadOnly } = useAuth();
   const { toast } = useToast();
   const [selectedCategory, setSelectedCategory] = useState('Todas');
   const [searchTerm, setSearchTerm] = useState('');
@@ -90,6 +90,12 @@ function LayetteList() {
         <Header />
 
         <div className="container mx-auto px-4 py-8">
+          {isReadOnly && (
+            <div className="mb-6 px-5 py-3 bg-azul/10 border border-azul/20 text-azul rounded-xl text-sm font-medium text-center">
+              Você está acompanhando esta lista em modo visualização — não é possível fazer alterações aqui.
+            </div>
+          )}
+
           {/* Progress Section */}
           <motion.div
             initial={{ opacity: 0, y: 20 }}
@@ -111,13 +117,15 @@ function LayetteList() {
                 )}
               </div>
 
-              <button
-                onClick={handleResetList}
-                className="flex items-center gap-2 px-6 py-2.5 bg-orange-50 hover:bg-orange-100 text-laranja border border-laranja/30 rounded-xl transition-all duration-300 font-medium"
-              >
-                <RotateCcw size={18} />
-                Resetar Lista
-              </button>
+              {!isReadOnly && (
+                <button
+                  onClick={handleResetList}
+                  className="flex items-center gap-2 px-6 py-2.5 bg-orange-50 hover:bg-orange-100 text-laranja border border-laranja/30 rounded-xl transition-all duration-300 font-medium"
+                >
+                  <RotateCcw size={18} />
+                  Resetar Lista
+                </button>
+              )}
             </div>
 
             <div className="mt-6 bg-gray-100 rounded-full h-4 overflow-hidden shadow-inner">

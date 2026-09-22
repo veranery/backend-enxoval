@@ -181,11 +181,16 @@ export const AuthProvider = ({ children }) => {
   const [currentUser, setCurrentUser] = useState(null);
   const [layetteItems, setLayetteItems] = useState([]);
   const [isLoadingList, setIsLoadingList] = useState(false);
+  // true quando a pessoa entrou por um link "somente visualização"
+  // (compartilhado por quem é dona da lista) — nesse modo, nada pode
+  // ser alterado.
+  const [isReadOnly, setIsReadOnly] = useState(false);
 
   useEffect(() => {
     const storedPhone = localStorage.getItem('currentUser');
     if (storedPhone) {
       setCurrentUser(storedPhone);
+      setIsReadOnly(localStorage.getItem('currentUserMode') === 'view');
       loadUserData(storedPhone);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -261,19 +266,26 @@ export const AuthProvider = ({ children }) => {
     }
   };
 
-  const login = (phone) => {
+  // options.readOnly: true = entrou por um link "somente visualização".
+  const login = (phone, options = {}) => {
+    const readOnly = Boolean(options.readOnly);
     setCurrentUser(phone);
+    setIsReadOnly(readOnly);
     localStorage.setItem('currentUser', phone);
+    localStorage.setItem('currentUserMode', readOnly ? 'view' : 'edit');
     loadUserData(phone);
   };
 
   const logout = () => {
     setCurrentUser(null);
     setLayetteItems([]);
+    setIsReadOnly(false);
     localStorage.removeItem('currentUser');
+    localStorage.removeItem('currentUserMode');
   };
 
   const updateItemQuantity = (itemId, newQuantity) => {
+    if (isReadOnly) return;
     const updatedItems = layetteItems.map((item) =>
       item.id === itemId ? { ...item, desiredQuantity: newQuantity } : item
     );
@@ -282,6 +294,7 @@ export const AuthProvider = ({ children }) => {
   };
 
   const toggleItemPurchased = (itemId) => {
+    if (isReadOnly) return;
     const updatedItems = layetteItems.map((item) =>
       item.id === itemId ? { ...item, purchased: !item.purchased } : item
     );
@@ -290,6 +303,7 @@ export const AuthProvider = ({ children }) => {
   };
 
   const resetList = () => {
+    if (isReadOnly) return;
     initializeDefaultData(currentUser);
   };
 
@@ -299,6 +313,7 @@ export const AuthProvider = ({ children }) => {
         currentUser,
         layetteItems,
         isLoadingList,
+        isReadOnly,
         isSyncEnabled: isFirebaseConfigured,
         login,
         logout,

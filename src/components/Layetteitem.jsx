@@ -8,7 +8,7 @@ const formatPrice = (value) =>
   value.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
 
 function LayetteItem({ item }) {
-  const { updateItemQuantity, toggleItemPurchased } = useAuth();
+  const { updateItemQuantity, toggleItemPurchased, isReadOnly } = useAuth();
   const color = getCategoryColor(item.category);
 
   const handleQuantityChange = (e) => {
@@ -51,9 +51,12 @@ function LayetteItem({ item }) {
           </div>
 
           <button
-            onClick={() => toggleItemPurchased(item.id)}
+            onClick={() => !isReadOnly && toggleItemPurchased(item.id)}
+            disabled={isReadOnly}
             aria-label={item.purchased ? 'Marcar como não comprado' : 'Marcar como comprado'}
             className={`shrink-0 w-10 h-10 rounded-full flex items-center justify-center transition-all duration-300 shadow-sm border ${
+              isReadOnly ? 'cursor-default' : ''
+            } ${
               item.purchased
                 ? 'text-white border-transparent'
                 : 'bg-white border-gray-200 text-gray-300 hover:text-white'
@@ -63,10 +66,10 @@ function LayetteItem({ item }) {
               borderColor: !item.purchased ? undefined : color,
             }}
             onMouseEnter={(e) => {
-              if (!item.purchased) e.currentTarget.style.backgroundColor = color;
+              if (!item.purchased && !isReadOnly) e.currentTarget.style.backgroundColor = color;
             }}
             onMouseLeave={(e) => {
-              if (!item.purchased) e.currentTarget.style.backgroundColor = '';
+              if (!item.purchased && !isReadOnly) e.currentTarget.style.backgroundColor = '';
             }}
           >
             <Check size={20} />
@@ -82,7 +85,8 @@ function LayetteItem({ item }) {
             min="0"
             value={item.desiredQuantity}
             onChange={handleQuantityChange}
-            className="w-20 px-3 py-1.5 rounded-lg bg-gray-50 border border-gray-200 text-gray-800 text-center font-medium focus:outline-none focus:ring-2 transition-all"
+            disabled={isReadOnly}
+            className="w-20 px-3 py-1.5 rounded-lg bg-gray-50 border border-gray-200 text-gray-800 text-center font-medium focus:outline-none focus:ring-2 transition-all disabled:opacity-60 disabled:cursor-not-allowed"
             style={{
               '--tw-ring-color': color,
               borderColor: 'transparent',
