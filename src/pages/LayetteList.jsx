@@ -5,7 +5,7 @@ import { motion } from 'framer-motion';
 import Header from '../components/Header';
 import LayetteItem from '../components/Layetteitem';
 import Notices from '../components/Notices';
-import { RotateCcw, Search, Info, Loader2 } from 'lucide-react';
+import { RotateCcw, Search, Info, Loader2, ListFilter } from 'lucide-react';
 import { useToast } from '../components/ui/use-toast';
 import { CATEGORIES, getCategoryColor } from '../data/categories';
 
@@ -14,6 +14,7 @@ function LayetteList() {
   const { toast } = useToast();
   const [selectedCategory, setSelectedCategory] = useState('Todas');
   const [searchTerm, setSearchTerm] = useState('');
+  const [showOnlyMissing, setShowOnlyMissing] = useState(false);
 
   const handleResetList = () => {
     resetList();
@@ -27,9 +28,10 @@ function LayetteList() {
     return layetteItems.filter((item) => {
       const matchesCategory = selectedCategory === 'Todas' || item.category === selectedCategory;
       const matchesSearch = item.name.toLowerCase().includes(searchTerm.toLowerCase());
-      return matchesCategory && matchesSearch;
+      const matchesMissing = !showOnlyMissing || !item.purchased;
+      return matchesCategory && matchesSearch && matchesMissing;
     });
-  }, [layetteItems, selectedCategory, searchTerm]);
+  }, [layetteItems, selectedCategory, searchTerm, showOnlyMissing]);
 
   const groupedItems = useMemo(() => {
     const groups = {};
@@ -149,17 +151,31 @@ function LayetteList() {
             <>
               {/* Search and Filters */}
               <div className="mb-10 space-y-6">
-                <div className="relative max-w-2xl mx-auto">
-                  <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
-                    <Search className="text-gray-400" size={20} />
+                <div className="flex flex-col sm:flex-row gap-3 max-w-2xl mx-auto">
+                  <div className="relative flex-1">
+                    <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+                      <Search className="text-gray-400" size={20} />
+                    </div>
+                    <input
+                      type="text"
+                      value={searchTerm}
+                      onChange={(e) => setSearchTerm(e.target.value)}
+                      placeholder="Buscar item..."
+                      className="w-full pl-12 pr-4 py-3.5 bg-gray-50 hover:bg-white border border-gray-200 focus:border-rosa focus:ring-4 focus:ring-rosa/10 rounded-2xl text-gray-800 placeholder-gray-400 focus:outline-none transition-all shadow-sm"
+                    />
                   </div>
-                  <input
-                    type="text"
-                    value={searchTerm}
-                    onChange={(e) => setSearchTerm(e.target.value)}
-                    placeholder="Buscar item..."
-                    className="w-full pl-12 pr-4 py-3.5 bg-gray-50 hover:bg-white border border-gray-200 focus:border-rosa focus:ring-4 focus:ring-rosa/10 rounded-2xl text-gray-800 placeholder-gray-400 focus:outline-none transition-all shadow-sm"
-                  />
+
+                  <button
+                    onClick={() => setShowOnlyMissing((value) => !value)}
+                    className={`flex items-center justify-center gap-2 px-5 py-3.5 rounded-2xl text-sm font-bold border transition-all duration-300 shadow-sm shrink-0 ${
+                      showOnlyMissing
+                        ? 'bg-rosa text-white border-rosa'
+                        : 'bg-gray-50 hover:bg-white text-gray-500 border-gray-200'
+                    }`}
+                  >
+                    <ListFilter size={18} />
+                    Faltando comprar
+                  </button>
                 </div>
 
                 <div className="flex flex-wrap gap-2 justify-center">
@@ -267,7 +283,7 @@ function LayetteList() {
                       Nenhum item encontrado.
                     </p>
                     <button
-                      onClick={() => {setSearchTerm(''); setSelectedCategory('Todas');}}
+                      onClick={() => { setSearchTerm(''); setSelectedCategory('Todas'); setShowOnlyMissing(false); }}
                       className="mt-4 text-rosa hover:underline font-medium"
                     >
                       Limpar filtros

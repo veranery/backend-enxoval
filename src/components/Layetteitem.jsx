@@ -10,6 +10,8 @@ const formatPrice = (value) =>
 function LayetteItem({ item }) {
   const { updateItemQuantity, toggleItemPurchased, isReadOnly } = useAuth();
   const color = getCategoryColor(item.category);
+  const missing = Math.max(item.recommendedQuantity - (item.desiredQuantity || 0), 0);
+  const isComplete = missing === 0;
 
   const handleQuantityChange = (e) => {
     const value = parseInt(e.target.value) || 0;
@@ -76,24 +78,33 @@ function LayetteItem({ item }) {
           </button>
         </div>
 
-        <div className="flex items-center gap-3 pt-3 border-t border-gray-50">
-          <label className="text-xs uppercase tracking-wider text-gray-400 font-bold">
-            Qtd possuída:
-          </label>
-          <input
-            type="number"
-            min="0"
-            value={item.desiredQuantity}
-            onChange={handleQuantityChange}
-            disabled={isReadOnly}
-            className="w-20 px-3 py-1.5 rounded-lg bg-gray-50 border border-gray-200 text-gray-800 text-center font-medium focus:outline-none focus:ring-2 transition-all disabled:opacity-60 disabled:cursor-not-allowed"
-            style={{
-              '--tw-ring-color': color,
-              borderColor: 'transparent',
-            }}
-            onFocus={(e) => (e.target.style.borderColor = color)}
-            onBlur={(e) => (e.target.style.borderColor = 'transparent')}
-          />
+        <div className="pt-3 border-t border-gray-50">
+          <p
+            className={`text-sm font-bold mb-2 ${isComplete ? 'text-verde' : ''}`}
+            style={!isComplete ? { color } : undefined}
+          >
+            {isComplete ? 'Completo! ✓' : `Faltam: ${missing}`}
+          </p>
+
+          <div className="flex items-center gap-3">
+            <label className="text-xs uppercase tracking-wider text-gray-400 font-bold">
+              Já tenho:
+            </label>
+            <input
+              type="number"
+              min="0"
+              value={item.desiredQuantity}
+              onChange={handleQuantityChange}
+              disabled={isReadOnly}
+              className="w-20 px-3 py-1.5 rounded-lg bg-gray-50 border border-gray-200 text-gray-800 text-center font-medium focus:outline-none focus:ring-2 transition-all disabled:opacity-60 disabled:cursor-not-allowed"
+              style={{
+                '--tw-ring-color': color,
+                borderColor: 'transparent',
+              }}
+              onFocus={(e) => (e.target.style.borderColor = color)}
+              onBlur={(e) => (e.target.style.borderColor = 'transparent')}
+            />
+          </div>
         </div>
 
         <a
