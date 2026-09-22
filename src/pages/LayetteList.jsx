@@ -218,17 +218,16 @@ function LayetteList() {
 
                   <div className="flex flex-wrap gap-3 mt-4">
                     <div className="px-4 py-2.5 rounded-xl bg-white shadow-sm border border-gray-100">
-                      <p className="text-xs text-gray-400 font-medium">No Pix ou dinheiro</p>
+                      <p className="text-xs text-gray-400 font-medium">Comprando no site</p>
                       <p className="text-sm font-bold text-gray-800">
-                        {COUPON.pixDiscount} OFF <span className="font-normal text-gray-400">com o cupom</span>{' '}
-                        <span className="text-rosa">{COUPON.pixCode}</span>
+                        {COUPON.siteDiscount} OFF <span className="font-normal text-gray-400">com o cupom</span>{' '}
+                        <span className="text-rosa">{COUPON.siteCode}</span>
                       </p>
                     </div>
                     <div className="px-4 py-2.5 rounded-xl bg-white shadow-sm border border-gray-100">
-                      <p className="text-xs text-gray-400 font-medium">No cartão {COUPON.cardInstallments}</p>
+                      <p className="text-xs text-gray-400 font-medium">Comprando na loja física</p>
                       <p className="text-sm font-bold text-gray-800">
-                        {COUPON.cardDiscount} OFF <span className="font-normal text-gray-400">com o cupom</span>{' '}
-                        <span className="text-azul">{COUPON.cardCode}</span>
+                        {COUPON.presencialDiscount} OFF <span className="font-normal text-gray-400">é só mostrar essa tela</span>
                       </p>
                     </div>
                   </div>
