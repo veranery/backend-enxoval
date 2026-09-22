@@ -211,6 +211,11 @@ function LayetteList() {
                   </button>
                 </div>
 
+                <p className="flex items-center justify-center gap-2 text-center text-xs sm:text-sm text-gray-400 max-w-xl mx-auto">
+                  <MessageCircle size={16} className="text-[#25D366] shrink-0" />
+                  Dica: marque a caixinha dos itens que você quer comprar e envie todos juntos em uma única mensagem pelo WhatsApp.
+                </p>
+
                 <div className="flex flex-wrap gap-2 justify-center">
                   {CATEGORIES.map((category) => {
                     const isSelected = selectedCategory === category;
