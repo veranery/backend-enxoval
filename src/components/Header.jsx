@@ -1,16 +1,46 @@
 import React from 'react';
 import { useAuth } from '../context/AuthContext';
-import { LogOut, Cloud, Smartphone } from 'lucide-react';
+import { LogOut, Cloud, Smartphone, Share2 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
+import { useToast } from './ui/use-toast';
 import logoMagia from '../assets/logo-magia-kids.png';
 
 function Header() {
   const { currentUser, logout, isSyncEnabled } = useAuth();
   const navigate = useNavigate();
+  const { toast } = useToast();
 
   const handleLogout = () => {
     logout();
     navigate('/');
+  };
+
+  const handleShare = async () => {
+    const shareUrl = `${window.location.origin}/?tel=${currentUser}`;
+    const shareText = 'Dá uma olhada na minha lista de enxoval! Por esse link você já entra direto e pode marcar o que for comprando 💕';
+
+    if (navigator.share) {
+      try {
+        await navigator.share({ title: 'Lista de Enxoval', text: shareText, url: shareUrl });
+      } catch (err) {
+        // pessoa cancelou o compartilhamento, não precisa fazer nada
+      }
+      return;
+    }
+
+    try {
+      await navigator.clipboard.writeText(`${shareText}\n${shareUrl}`);
+      toast({
+        title: 'Link copiado!',
+        description: 'Cole numa conversa (WhatsApp, por exemplo) para compartilhar sua lista.',
+      });
+    } catch (err) {
+      toast({
+        title: 'Não foi possível copiar o link',
+        description: shareUrl,
+        variant: 'destructive',
+      });
+    }
   };
 
   return (
@@ -34,6 +64,15 @@ function Header() {
             <span className="text-gray-600 font-medium hidden sm:inline">
               {currentUser}
             </span>
+
+            <button
+              onClick={handleShare}
+              className="flex items-center gap-2 px-4 py-2 bg-rosa/10 hover:bg-rosa/20 text-rosa rounded-lg transition-all duration-300 font-medium border border-rosa/20"
+              title="Compartilhar sua lista"
+            >
+              <Share2 size={20} />
+              <span className="hidden sm:inline">Compartilhar</span>
+            </button>
 
             <button
               onClick={handleLogout}

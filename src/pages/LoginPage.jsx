@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { Helmet } from 'react-helmet';
@@ -15,10 +15,22 @@ function validarCelularBR(telefone) {
 function LoginPage() {
   const [phone, setPhone] = useState('');
   const [phoneError, setPhoneError] = useState(false);
+  const [isSharedLink, setIsSharedLink] = useState(false);
 
   const { login } = useAuth();
   const navigate = useNavigate();
   const { toast } = useToast();
+
+  // Se a pessoa chegou por um link de "Compartilhar lista", o telefone já
+  // vem preenchido na URL (?tel=...), então só falta clicar em Entrar.
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    const sharedPhone = params.get('tel');
+    if (sharedPhone && validarCelularBR(sharedPhone)) {
+      setPhone(sharedPhone);
+      setIsSharedLink(true);
+    }
+  }, []);
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -69,7 +81,11 @@ function LoginPage() {
               </motion.div>
 
               <h1 className="text-3xl font-bold text-gray-800 mb-3 tracking-tight">Bem-vindo!</h1>
-              <p className="text-gray-500">Entre com seu telefone para gerenciar sua lista de enxoval</p>
+              <p className="text-gray-500">
+                {isSharedLink
+                  ? 'Você recebeu uma lista de enxoval compartilhada. É só confirmar abaixo para acessá-la.'
+                  : 'Entre com seu telefone para gerenciar sua lista de enxoval'}
+              </p>
             </div>
 
             <form onSubmit={handleSubmit} className="space-y-6">
