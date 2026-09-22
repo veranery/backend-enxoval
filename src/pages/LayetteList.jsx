@@ -5,10 +5,13 @@ import { motion } from 'framer-motion';
 import Header from '../components/Header';
 import LayetteItem from '../components/Layetteitem';
 import Notices from '../components/Notices';
-import { RotateCcw, Search, Info, Loader2, ListFilter, MessageCircle, X } from 'lucide-react';
+import { RotateCcw, Search, Info, Loader2, ListFilter, MessageCircle, X, ExternalLink, Tag, TriangleAlert } from 'lucide-react';
 import { useToast } from '../components/ui/use-toast';
 import { CATEGORIES, getCategoryColor } from '../data/categories';
 import { buildWhatsAppLinkForItems, buildWhatsAppGeneralLink } from '../lib/whatsapp';
+import { COUPON } from '../data/coupon';
+
+const MAGIA_KIDS_STORE_URL = 'https://www.lojamagiakids.com.br/';
 
 function LayetteList() {
   const { layetteItems, resetList, isLoadingList, isReadOnly } = useAuth();
@@ -17,9 +20,12 @@ function LayetteList() {
   const [searchTerm, setSearchTerm] = useState('');
   const [showOnlyMissing, setShowOnlyMissing] = useState(false);
   const [selectedIds, setSelectedIds] = useState(() => new Set());
+  const [showResetConfirm, setShowResetConfirm] = useState(false);
+  const [showCoupon, setShowCoupon] = useState(true);
 
-  const handleResetList = () => {
+  const handleConfirmReset = () => {
     resetList();
+    setShowResetConfirm(false);
     toast({
       title: 'Lista resetada!',
       description: 'Todas as quantidades foram restauradas aos valores recomendados.',
@@ -140,7 +146,17 @@ function LayetteList() {
                 )}
               </div>
 
-              <div className="flex items-center gap-3">
+              <div className="flex flex-wrap items-center justify-center gap-3">
+                <a
+                  href={MAGIA_KIDS_STORE_URL}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="flex items-center gap-2 px-6 py-2.5 bg-azul/10 hover:bg-azul/20 text-azul rounded-xl transition-all duration-300 font-medium border border-azul/20"
+                >
+                  <ExternalLink size={18} />
+                  Ver Loja Magia Kids
+                </a>
+
                 <a
                   href={buildWhatsAppGeneralLink()}
                   target="_blank"
@@ -153,7 +169,7 @@ function LayetteList() {
 
                 {!isReadOnly && (
                   <button
-                    onClick={handleResetList}
+                    onClick={() => setShowResetConfirm(true)}
                     className="flex items-center gap-2 px-6 py-2.5 bg-orange-50 hover:bg-orange-100 text-laranja border border-laranja/30 rounded-xl transition-all duration-300 font-medium"
                   >
                     <RotateCcw size={18} />
@@ -172,6 +188,54 @@ function LayetteList() {
               />
             </div>
           </motion.div>
+
+          {COUPON.enabled && stats.percentage >= COUPON.thresholdPercentage && showCoupon && (
+            <motion.div
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              className="relative mb-8 p-6 rounded-3xl border border-amarelo/30 bg-gradient-to-r from-rosa/10 via-amarelo/10 to-verde/10 shadow-sm overflow-hidden"
+            >
+              <button
+                onClick={() => setShowCoupon(false)}
+                aria-label="Fechar aviso do cupom"
+                title="Fechar"
+                className="absolute top-4 right-4 w-8 h-8 flex items-center justify-center rounded-lg text-gray-400 hover:text-gray-600 hover:bg-white/60 transition-colors"
+              >
+                <X size={18} />
+              </button>
+
+              <div className="flex items-start gap-4 pr-8">
+                <div className="shrink-0 w-12 h-12 rounded-2xl bg-white flex items-center justify-center shadow-sm">
+                  <Tag className="text-rosa" size={24} />
+                </div>
+                <div>
+                  <h3 className="text-lg font-bold text-gray-800">
+                    Você está quase lá! Faltam poucos itens 🎉
+                  </h3>
+                  <p className="text-sm text-gray-600 mt-1">
+                    Aproveite os cupons especiais para fechar o que falta da sua lista:
+                  </p>
+
+                  <div className="flex flex-wrap gap-3 mt-4">
+                    <div className="px-4 py-2.5 rounded-xl bg-white shadow-sm border border-gray-100">
+                      <p className="text-xs text-gray-400 font-medium">No Pix ou dinheiro</p>
+                      <p className="text-sm font-bold text-gray-800">
+                        {COUPON.pixDiscount} OFF <span className="font-normal text-gray-400">com o cupom</span>{' '}
+                        <span className="text-rosa">{COUPON.pixCode}</span>
+                      </p>
+                    </div>
+                    <div className="px-4 py-2.5 rounded-xl bg-white shadow-sm border border-gray-100">
+                      <p className="text-xs text-gray-400 font-medium">No cartão {COUPON.cardInstallments}</p>
+                      <p className="text-sm font-bold text-gray-800">
+                        {COUPON.cardDiscount} OFF <span className="font-normal text-gray-400">com o cupom</span>{' '}
+                        <span className="text-azul">{COUPON.cardCode}</span>
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </motion.div>
+          )}
 
           <Notices />
 
@@ -390,6 +454,43 @@ function LayetteList() {
               </button>
             </div>
           </motion.div>
+        )}
+
+        {showResetConfirm && (
+          <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/40">
+            <motion.div
+              initial={{ opacity: 0, scale: 0.95 }}
+              animate={{ opacity: 1, scale: 1 }}
+              className="bg-white rounded-3xl shadow-xl max-w-sm w-full p-6"
+            >
+              <div className="flex items-start gap-3">
+                <div className="shrink-0 w-11 h-11 rounded-full bg-orange-50 flex items-center justify-center">
+                  <TriangleAlert className="text-laranja" size={22} />
+                </div>
+                <div>
+                  <h3 className="text-lg font-bold text-gray-800">Resetar a lista?</h3>
+                  <p className="text-sm text-gray-500 mt-1">
+                    Todas as quantidades vão voltar para os valores recomendados e os itens marcados como comprados vão ficar como não comprados. Essa ação não pode ser desfeita.
+                  </p>
+                </div>
+              </div>
+
+              <div className="flex items-center gap-3 mt-6">
+                <button
+                  onClick={() => setShowResetConfirm(false)}
+                  className="flex-1 px-4 py-2.5 rounded-xl bg-gray-100 hover:bg-gray-200 text-gray-700 font-medium transition-colors"
+                >
+                  Cancelar
+                </button>
+                <button
+                  onClick={handleConfirmReset}
+                  className="flex-1 px-4 py-2.5 rounded-xl bg-laranja hover:opacity-90 text-white font-bold transition-opacity"
+                >
+                  Sim, resetar
+                </button>
+              </div>
+            </motion.div>
+          </div>
         )}
       </div>
     </>
