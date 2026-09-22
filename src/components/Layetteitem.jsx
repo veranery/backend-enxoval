@@ -1,7 +1,8 @@
 import React from 'react';
 import { useAuth } from '../context/AuthContext';
-import { Check } from 'lucide-react';
+import { Check, MessageCircle } from 'lucide-react';
 import { getCategoryColor } from '../data/categories';
+import { buildWhatsAppLink } from '../lib/whatsapp';
 
 const formatPrice = (value) =>
   value.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
@@ -90,6 +91,16 @@ function LayetteItem({ item }) {
             onBlur={(e) => (e.target.style.borderColor = 'transparent')}
           />
         </div>
+
+        <a
+          href={buildWhatsAppLink(item.name)}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="mt-3 flex items-center justify-center gap-2 w-full py-2.5 rounded-xl bg-[#25D366] hover:bg-[#1fb856] text-white text-sm font-bold shadow-sm transition-all duration-300"
+        >
+          <MessageCircle size={18} />
+          Comprar
+        </a>
       </div>
     </div>
   );

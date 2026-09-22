@@ -65,6 +65,20 @@ function LayetteList() {
     return { total, purchased, percentage, optionalCount };
   }, [layetteItems]);
 
+  // Mesmo cálculo, mas separado por categoria (também ignorando opcionais),
+  // para mostrar o progresso de cada categoria no cabeçalho dela.
+  const categoryStats = useMemo(() => {
+    const map = {};
+    CATEGORIES.filter((c) => c !== 'Todas').forEach((cat) => {
+      const requiredItems = layetteItems.filter((item) => item.category === cat && !item.optional);
+      const total = requiredItems.length;
+      const purchased = requiredItems.filter((item) => item.purchased).length;
+      const percentage = total > 0 ? Math.round((purchased / total) * 100) : 0;
+      map[cat] = { total, purchased, percentage };
+    });
+    return map;
+  }, [layetteItems]);
+
   return (
     <>
       <Helmet>
@@ -175,7 +189,7 @@ function LayetteList() {
                       animate={{ opacity: 1, y: 0 }}
                       transition={{ duration: 0.5 }}
                     >
-                      <div className="flex items-center gap-3 mb-2 pb-2 border-b border-gray-100">
+                      <div className="flex flex-wrap items-center gap-3 mb-2 pb-2 border-b border-gray-100">
                         <div
                           className="h-8 w-1.5 rounded-full"
                           style={{ backgroundColor: catColor }}
@@ -184,11 +198,28 @@ function LayetteList() {
                           {category}
                         </h3>
                         <span
-                          className="px-3 py-1 rounded-full text-xs font-bold text-white ml-2"
+                          className="px-3 py-1 rounded-full text-xs font-bold text-white"
                           style={{ backgroundColor: catColor }}
                         >
                           {items.length}
                         </span>
+
+                        {categoryStats[category] && categoryStats[category].total > 0 && (
+                          <div className="flex items-center gap-2 ml-auto">
+                            <span className="text-xs font-semibold text-gray-400">
+                              {categoryStats[category].purchased}/{categoryStats[category].total} ({categoryStats[category].percentage}%)
+                            </span>
+                            <div className="w-24 h-2 bg-gray-100 rounded-full overflow-hidden">
+                              <div
+                                className="h-full rounded-full transition-all duration-500"
+                                style={{
+                                  width: `${categoryStats[category].percentage}%`,
+                                  backgroundColor: catColor,
+                                }}
+                              />
+                            </div>
+                          </div>
+                        )}
                       </div>
 
                       {category === 'MALA DA MATERNIDADE' && (
