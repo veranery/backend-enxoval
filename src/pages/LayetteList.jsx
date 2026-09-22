@@ -5,9 +5,10 @@ import { motion } from 'framer-motion';
 import Header from '../components/Header';
 import LayetteItem from '../components/Layetteitem';
 import Notices from '../components/Notices';
-import { RotateCcw, Search, Info, Loader2, ListFilter } from 'lucide-react';
+import { RotateCcw, Search, Info, Loader2, ListFilter, MessageCircle, X } from 'lucide-react';
 import { useToast } from '../components/ui/use-toast';
 import { CATEGORIES, getCategoryColor } from '../data/categories';
+import { buildWhatsAppLinkForItems, buildWhatsAppGeneralLink } from '../lib/whatsapp';
 
 function LayetteList() {
   const { layetteItems, resetList, isLoadingList, isReadOnly } = useAuth();
@@ -15,6 +16,7 @@ function LayetteList() {
   const [selectedCategory, setSelectedCategory] = useState('Todas');
   const [searchTerm, setSearchTerm] = useState('');
   const [showOnlyMissing, setShowOnlyMissing] = useState(false);
+  const [selectedIds, setSelectedIds] = useState(() => new Set());
 
   const handleResetList = () => {
     resetList();
@@ -23,6 +25,25 @@ function LayetteList() {
       description: 'Todas as quantidades foram restauradas aos valores recomendados.',
     });
   };
+
+  const toggleSelectItem = (itemId) => {
+    setSelectedIds((prev) => {
+      const next = new Set(prev);
+      if (next.has(itemId)) {
+        next.delete(itemId);
+      } else {
+        next.add(itemId);
+      }
+      return next;
+    });
+  };
+
+  const clearSelection = () => setSelectedIds(new Set());
+
+  const selectedItems = useMemo(
+    () => layetteItems.filter((item) => selectedIds.has(item.id)),
+    [layetteItems, selectedIds]
+  );
 
   const filteredItems = useMemo(() => {
     return layetteItems.filter((item) => {
@@ -119,15 +140,27 @@ function LayetteList() {
                 )}
               </div>
 
-              {!isReadOnly && (
-                <button
-                  onClick={handleResetList}
-                  className="flex items-center gap-2 px-6 py-2.5 bg-orange-50 hover:bg-orange-100 text-laranja border border-laranja/30 rounded-xl transition-all duration-300 font-medium"
+              <div className="flex items-center gap-3">
+                <a
+                  href={buildWhatsAppGeneralLink()}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="flex items-center gap-2 px-6 py-2.5 bg-[#25D366] hover:bg-[#1fb856] text-white rounded-xl transition-all duration-300 font-medium shadow-sm"
                 >
-                  <RotateCcw size={18} />
-                  Resetar Lista
-                </button>
-              )}
+                  <MessageCircle size={18} />
+                  Falar no WhatsApp
+                </a>
+
+                {!isReadOnly && (
+                  <button
+                    onClick={handleResetList}
+                    className="flex items-center gap-2 px-6 py-2.5 bg-orange-50 hover:bg-orange-100 text-laranja border border-laranja/30 rounded-xl transition-all duration-300 font-medium"
+                  >
+                    <RotateCcw size={18} />
+                    Resetar Lista
+                  </button>
+                )}
+              </div>
             </div>
 
             <div className="mt-6 bg-gray-100 rounded-full h-4 overflow-hidden shadow-inner">
@@ -268,7 +301,11 @@ function LayetteList() {
                             animate={{ opacity: 1, scale: 1 }}
                             transition={{ duration: 0.3 }}
                           >
-                            <LayetteItem item={item} />
+                            <LayetteItem
+                              item={item}
+                              isSelected={selectedIds.has(item.id)}
+                              onToggleSelect={toggleSelectItem}
+                            />
                           </motion.div>
                         ))}
                       </div>
@@ -316,6 +353,39 @@ function LayetteList() {
             </>
           )}
         </div>
+
+        {selectedItems.length > 0 && (
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="fixed bottom-4 inset-x-0 z-40 flex justify-center px-4"
+          >
+            <div className="flex items-center gap-3 bg-white shadow-xl border border-gray-100 rounded-2xl pl-5 pr-3 py-3 max-w-lg w-full sm:w-auto">
+              <span className="text-sm font-semibold text-gray-700 flex-1 sm:flex-none">
+                {selectedItems.length} {selectedItems.length === 1 ? 'item selecionado' : 'itens selecionados'}
+              </span>
+
+              <a
+                href={buildWhatsAppLinkForItems(selectedItems.map((item) => item.name))}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex items-center gap-2 px-4 py-2 rounded-xl bg-[#25D366] hover:bg-[#1fb856] text-white text-sm font-bold shadow-sm shrink-0"
+              >
+                <MessageCircle size={16} />
+                Comprar no WhatsApp
+              </a>
+
+              <button
+                onClick={clearSelection}
+                aria-label="Limpar seleção"
+                title="Limpar seleção"
+                className="w-8 h-8 shrink-0 flex items-center justify-center rounded-lg text-gray-400 hover:text-gray-600 hover:bg-gray-50 transition-colors"
+              >
+                <X size={18} />
+              </button>
+            </div>
+          </motion.div>
+        )}
       </div>
     </>
   );
