@@ -177,6 +177,35 @@ const migrateItems = (parsedData) => {
   });
 };
 
+// Chave usada para reconhecer o "mesmo" item independente de pequenas
+// diferenças de espaço/maiúsculas no nome (ex: "Chupeta (livre)" vs
+// "Chupeta(livre)").
+const itemKey = (name, category) => `${(name || '').toLowerCase().replace(/\s+/g, '')}|${category}`;
+
+const DEFAULT_ITEMS_BY_KEY = new Map(
+  DEFAULT_LAYETTE_ITEMS.map((def) => [itemKey(def.name, def.category), def])
+);
+
+// Reconcilia os itens salvos (aparelho/nuvem) com a lista de itens atual:
+// - corrige o id de itens antigos, inclusive os que tinham ids duplicados
+//   numa versão anterior (o id correto agora é o do catálogo atual);
+// - preenche campos novos, como "optional" e "startingPrice", nos itens
+//   que a pessoa já tinha salvo antes de esses campos existirem.
+// Sempre preserva o que é do usuário: desiredQuantity e purchased.
+const reconcileWithDefaults = (items) => {
+  return items.map((item) => {
+    const def = DEFAULT_ITEMS_BY_KEY.get(itemKey(item.name, item.category));
+    if (!def) return item;
+
+    return {
+      ...item,
+      id: def.id,
+      optional: def.optional,
+      startingPrice: def.startingPrice,
+    };
+  });
+};
+
 export const AuthProvider = ({ children }) => {
   const [currentUser, setCurrentUser] = useState(null);
   const [layetteItems, setLayetteItems] = useState([]);
@@ -256,8 +285,9 @@ export const AuthProvider = ({ children }) => {
           initializeDefaultData(phone);
           return;
         }
-        setLayetteItems(migrated);
-        persist(phone, migrated);
+        const reconciled = reconcileWithDefaults(migrated);
+        setLayetteItems(reconciled);
+        persist(phone, reconciled);
       } else {
         initializeDefaultData(phone);
       }
